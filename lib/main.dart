@@ -11,6 +11,7 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       title: 'SwiftPay',
+      debugShowCheckedModeBanner: false,
       theme: ThemeData(
         // This is the theme of your application.
         //
@@ -31,7 +32,6 @@ class MyApp extends StatelessWidget {
 class MyHomePage extends StatefulWidget {
   MyHomePage({Key key, this.title}) : super(key: key);
 
-
   final String title;
 
   @override
@@ -39,15 +39,15 @@ class MyHomePage extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<MyHomePage> {
-
   @override
-  void initState() { 
+  void initState() {
     super.initState();
-    Timer(Duration(seconds: 3), () => {
-      Navigator.push(context, MaterialPageRoute(
-        builder: (context) =>  Login()
-      ))
-    });
+    Timer(
+        Duration(seconds: 3),
+        () => {
+              Navigator.push(
+                  context, MaterialPageRoute(builder: (context) => Login()))
+            });
   }
 
   @override
@@ -58,12 +58,21 @@ class _MyHomePageState extends State<MyHomePage> {
           mainAxisAlignment: MainAxisAlignment.center,
           crossAxisAlignment: CrossAxisAlignment.center,
           children: <Widget>[
-            Image.asset("assets/images/APU.png", width: 300.0, height: 300.0,),
-            SizedBox(height: 4.0,),
-            Text("Powered by Dart Flutter Technology", style: TextStyle(fontSize: 12.0),),
+            Image.asset(
+              "assets/images/APU.png",
+              width: 300.0,
+              height: 300.0,
+            ),
+            SizedBox(
+              height: 4.0,
+            ),
+            Text(
+              "Powered by Dart Flutter Technology",
+              style: TextStyle(fontSize: 12.0),
+            ),
           ],
-          ),
-      ), 
+        ),
+      ),
     );
   }
 }
