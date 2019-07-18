@@ -45,7 +45,7 @@ class _HistoryState extends State<History> {
                   height: 12.0,
                 ),
                 SizedBox(
-                    height: 550.0,
+                    height: 508.5,
                     width: 600.0,
                     child: new ListView(
                       children: <Widget>[

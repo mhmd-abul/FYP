@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
+import 'package:swiftpay/login.dart';
 
 class Register extends StatefulWidget {
   Register({Key key}) : super(key: key);
@@ -8,9 +9,26 @@ class Register extends StatefulWidget {
 }
 
 class _RegisterState extends State<Register> {
+  final scaffoldKey = GlobalKey<ScaffoldState>();
+  final _tpnumber = TextEditingController();
+  final _password = TextEditingController();
+  bool _validate_tpnumber = false;
+  bool _validate_password = false;
+
+  @override
+  void dispose() {
+    _tpnumber.dispose();
+    _password.dispose();
+    _validate_tpnumber = false;
+    _validate_password = false;
+
+    super.dispose();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      key: scaffoldKey,
       resizeToAvoidBottomPadding: false,
       body: Container(
         padding: EdgeInsets.symmetric(vertical: 40.0, horizontal: 24.0),
@@ -82,23 +100,28 @@ class _RegisterState extends State<Register> {
                       borderRadius: BorderRadius.circular(10.0),
                       border: Border.all(color: Colors.grey[200])),
                   child: TextField(
+                    controller: _tpnumber,
                     decoration: InputDecoration(
-                        fillColor: Colors.grey[200],
-                        enabledBorder: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(10.0),
-                            borderSide: BorderSide(color: Colors.grey[200])),
-                        focusedBorder: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(10.0),
-                            borderSide: BorderSide(color: Colors.blue)),
-                        border: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(10.0),
-                            borderSide: BorderSide(color: Colors.grey[200])),
-                        prefixIcon: Icon(
-                          Icons.account_circle,
-                          color: Colors.blue,
-                        ),
-                        contentPadding: EdgeInsets.all(8.0),
-                        hintText: "TP Number        e.g : TP043983"),
+                      fillColor: Colors.grey[200],
+                      enabledBorder: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(10.0),
+                          borderSide: BorderSide(color: Colors.grey[200])),
+                      focusedBorder: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(10.0),
+                          borderSide: BorderSide(color: Colors.blue)),
+                      border: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(10.0),
+                          borderSide: BorderSide(color: Colors.grey[200])),
+                      prefixIcon: Icon(
+                        Icons.account_circle,
+                        color: Colors.blue,
+                      ),
+                      contentPadding: EdgeInsets.all(8.0),
+                      hintText: "TP Number        e.g : TP043983",
+                      errorText: _validate_tpnumber
+                          ? 'TP Number Can\'t Be Empty'
+                          : null,
+                    ),
                   ),
                 ),
                 SizedBox(
@@ -112,23 +135,28 @@ class _RegisterState extends State<Register> {
                       border: Border.all(color: Colors.grey[200])),
                   child: TextField(
                     obscureText: true,
+                    controller: _password,
                     decoration: InputDecoration(
-                        fillColor: Colors.grey[200],
-                        enabledBorder: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(10.0),
-                            borderSide: BorderSide(color: Colors.grey[200])),
-                        focusedBorder: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(10.0),
-                            borderSide: BorderSide(color: Colors.blue)),
-                        border: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(10.0),
-                            borderSide: BorderSide(color: Colors.grey[200])),
-                        prefixIcon: Icon(
-                          Icons.lock,
-                          color: Colors.blue,
-                        ),
-                        contentPadding: EdgeInsets.all(8.0),
-                        hintText: "Password"),
+                      fillColor: Colors.grey[200],
+                      enabledBorder: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(10.0),
+                          borderSide: BorderSide(color: Colors.grey[200])),
+                      focusedBorder: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(10.0),
+                          borderSide: BorderSide(color: Colors.blue)),
+                      border: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(10.0),
+                          borderSide: BorderSide(color: Colors.grey[200])),
+                      prefixIcon: Icon(
+                        Icons.lock,
+                        color: Colors.blue,
+                      ),
+                      contentPadding: EdgeInsets.all(8.0),
+                      hintText: "Password",
+                      errorText: _validate_password
+                          ? 'Password Can\'t Be Empty'
+                          : null,
+                    ),
                   ),
                 ),
                 SizedBox(
@@ -141,7 +169,39 @@ class _RegisterState extends State<Register> {
                       color: Colors.blue,
                       borderRadius: BorderRadius.circular(10.0)),
                   child: InkWell(
-                    onTap: () {},
+                    onTap: () {
+                      setState(() {
+                        _tpnumber.text.isEmpty
+                            ? _validate_tpnumber = true
+                            : _validate_tpnumber = false;
+                        _password.text.isEmpty
+                            ? _validate_password = true
+                            : _validate_password = false;
+                      });
+                      if (_validate_tpnumber == false &&
+                          _validate_password == false) {
+                        Navigator.push(context,
+                            MaterialPageRoute(builder: (context) => Login()));
+                      } else if (_validate_tpnumber == true &&
+                          _validate_password == true) {
+                        final snackbar = SnackBar(
+                          content: Text(
+                              'Please Check Your TP Number and Your Password'),
+                        );
+                        scaffoldKey.currentState.showSnackBar(snackbar);
+                      } else if (_validate_tpnumber == true) {
+                        final snackbar = SnackBar(
+                          content: Text('Please Check Your TP Number'),
+                        );
+                        scaffoldKey.currentState.showSnackBar(snackbar);
+                      } else if (_validate_password == true &&
+                          _validate_password == true) {
+                        final snackbar = SnackBar(
+                          content: Text('Please Check Your Password'),
+                        );
+                        scaffoldKey.currentState.showSnackBar(snackbar);
+                      }
+                    },
                     child: Center(
                       child: Text(
                         "Sign Up",
