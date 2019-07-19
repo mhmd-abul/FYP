@@ -8,6 +8,22 @@ class BankPayment extends StatefulWidget {
 }
 
 class _BankPaymentState extends State<BankPayment> {
+  final scaffoldKey = GlobalKey<ScaffoldState>();
+
+  final _user_bank = TextEditingController();
+  final _user_password = TextEditingController();
+  bool _validate_user_bank = false;
+  bool _validate_user_password = false;
+
+  @override
+  void dispose() {
+    _user_bank.dispose();
+    _user_password.dispose();
+    _validate_user_bank = false;
+    _validate_user_password = false;
+    super.dispose();
+  }
+
   void _showDialog() {
     // flutter defined function
     showDialog(
@@ -42,6 +58,7 @@ class _BankPaymentState extends State<BankPayment> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      key: scaffoldKey,
       body: SafeArea(
         child: ListView(
           shrinkWrap: true,
@@ -77,23 +94,28 @@ class _BankPaymentState extends State<BankPayment> {
                       borderRadius: BorderRadius.circular(10.0),
                       border: Border.all(color: Colors.red[200])),
                   child: TextField(
+                    controller: _user_bank,
                     decoration: InputDecoration(
-                        fillColor: Colors.red[200],
-                        enabledBorder: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(10.0),
-                            borderSide: BorderSide(color: Colors.red[200])),
-                        focusedBorder: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(10.0),
-                            borderSide: BorderSide(color: Colors.red)),
-                        border: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(10.0),
-                            borderSide: BorderSide(color: Colors.red[200])),
-                        prefixIcon: Icon(
-                          Icons.account_circle,
-                          color: Colors.red,
-                        ),
-                        contentPadding: EdgeInsets.all(8.0),
-                        hintText: "User ID"),
+                      fillColor: Colors.red[200],
+                      enabledBorder: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(10.0),
+                          borderSide: BorderSide(color: Colors.red[200])),
+                      focusedBorder: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(10.0),
+                          borderSide: BorderSide(color: Colors.red)),
+                      border: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(10.0),
+                          borderSide: BorderSide(color: Colors.red[200])),
+                      prefixIcon: Icon(
+                        Icons.account_circle,
+                        color: Colors.red,
+                      ),
+                      contentPadding: EdgeInsets.all(8.0),
+                      hintText: "User ID",
+                      errorText: _validate_user_bank
+                          ? 'Password Can\'t Be Empty'
+                          : null,
+                    ),
                   ),
                 ),
                 SizedBox(
@@ -105,24 +127,29 @@ class _BankPaymentState extends State<BankPayment> {
                       borderRadius: BorderRadius.circular(10.0),
                       border: Border.all(color: Colors.red[200])),
                   child: TextField(
+                    controller: _user_password,
                     obscureText: true,
                     decoration: InputDecoration(
-                        fillColor: Colors.red[200],
-                        enabledBorder: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(10.0),
-                            borderSide: BorderSide(color: Colors.red[200])),
-                        focusedBorder: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(10.0),
-                            borderSide: BorderSide(color: Colors.red)),
-                        border: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(10.0),
-                            borderSide: BorderSide(color: Colors.red[200])),
-                        prefixIcon: Icon(
-                          Icons.lock,
-                          color: Colors.red,
-                        ),
-                        contentPadding: EdgeInsets.all(8.0),
-                        hintText: "Password"),
+                      fillColor: Colors.red[200],
+                      enabledBorder: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(10.0),
+                          borderSide: BorderSide(color: Colors.red[200])),
+                      focusedBorder: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(10.0),
+                          borderSide: BorderSide(color: Colors.red)),
+                      border: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(10.0),
+                          borderSide: BorderSide(color: Colors.red[200])),
+                      prefixIcon: Icon(
+                        Icons.lock,
+                        color: Colors.red,
+                      ),
+                      contentPadding: EdgeInsets.all(8.0),
+                      hintText: "Password",
+                      errorText: _validate_user_password
+                          ? 'Password Can\'t Be Empty'
+                          : null,
+                    ),
                   ),
                 ),
                 SizedBox(
@@ -136,7 +163,36 @@ class _BankPaymentState extends State<BankPayment> {
                       borderRadius: BorderRadius.circular(10.0)),
                   child: InkWell(
                     onTap: () {
-                      _showDialog();
+                      setState(() {
+                        _user_bank.text.isEmpty
+                            ? _validate_user_bank = true
+                            : _validate_user_bank = false;
+
+                        _user_password.text.isEmpty
+                            ? _validate_user_password = true
+                            : _validate_user_password = false;
+                      });
+                      if (_validate_user_bank == false &&
+                          _validate_user_password == false) {
+                        _showDialog();
+                      } else if (_validate_user_bank == true &&
+                          _validate_user_password == true) {
+                        final snackbar = SnackBar(
+                          content: Text(
+                              'Please Check Your User ID and Your Password'),
+                        );
+                        scaffoldKey.currentState.showSnackBar(snackbar);
+                      } else if (_validate_user_bank == true) {
+                        final snackbar = SnackBar(
+                          content: Text('Please Check Your User ID'),
+                        );
+                        scaffoldKey.currentState.showSnackBar(snackbar);
+                      } else if (_validate_user_password == true) {
+                        final snackbar = SnackBar(
+                          content: Text('Please Check Your Password'),
+                        );
+                        scaffoldKey.currentState.showSnackBar(snackbar);
+                      }
                     },
                     child: Center(
                       child: Text(
