@@ -1,6 +1,22 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
-import 'package:swiftpay/login.dart';
+import 'package:swiftpay/model/student.dart';
+import 'dart:async';
+import 'dart:convert';
+import 'package:http/http.dart' as http;
+
+Future<Student> createStudent(String url, {Map body}) async {
+  return http.post(url, body: json.encode(body), headers: {
+    "Content-Type": "application/json"
+  }).then((http.Response response) {
+    final int statusCode = response.statusCode;
+
+    if (statusCode < 200 || statusCode > 400 || json == null) {
+      throw new Exception("Error while fetching data");
+    }
+    return Student.fromJson(json.decode(response.body));
+  });
+}
 
 class Register extends StatefulWidget {
   Register({Key key}) : super(key: key);
@@ -14,6 +30,17 @@ class _RegisterState extends State<Register> {
   final _password = TextEditingController();
   bool _validate_tpnumber = false;
   bool _validate_password = false;
+
+  void handleSubmit() async {
+    print('something');
+
+    Student newStudent =
+        new Student(tpnumber: _tpnumber.text, password: _password.text);
+    print(newStudent.toMap());
+    Student p = await createStudent('http://10.0.2.2:4000/student_registration',
+        body: newStudent.toMap());
+    print(p.tpnumber);
+  }
 
   @override
   void dispose() {
@@ -180,8 +207,7 @@ class _RegisterState extends State<Register> {
                       });
                       if (_validate_tpnumber == false &&
                           _validate_password == false) {
-                        Navigator.push(context,
-                            MaterialPageRoute(builder: (context) => Login()));
+                        handleSubmit();
                       } else if (_validate_tpnumber == true &&
                           _validate_password == true) {
                         final snackbar = SnackBar(
