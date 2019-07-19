@@ -39,7 +39,6 @@ class _RegisterState extends State<Register> {
     print(newStudent.toMap());
     Student p = await createStudent('http://10.0.2.2:4000/student_registration',
         body: newStudent.toMap());
-
     print(p.tpnumber);
   }
 
