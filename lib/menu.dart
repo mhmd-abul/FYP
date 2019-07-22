@@ -3,8 +3,10 @@ import 'package:flutter/painting.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter/scheduler.dart';
 import 'package:swiftpay/history.dart';
+import 'package:swiftpay/login.dart';
 import 'package:swiftpay/pay.dart';
 import 'package:swiftpay/topup.dart';
+import 'package:swiftpay/auth.dart';
 
 void main() => runApp(Menu());
 
@@ -39,6 +41,7 @@ class _MenuState extends State<Menu> {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: <Widget>[
                 Row(
+                  
                   children: <Widget>[
                     Container(
                       width: 55.0,
@@ -57,11 +60,32 @@ class _MenuState extends State<Menu> {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       mainAxisAlignment: MainAxisAlignment.start,
                       children: <Widget>[
-                        Text("TP043983", style: TextStyle(fontFamily: "Regular", fontSize: 24.0, fontWeight: FontWeight.w600,),),
+                        Text(student_session['tpnumber'], style: TextStyle(fontFamily: "Regular", fontSize: 24.0, fontWeight: FontWeight.w600,),),
                         Text("APU Student", style: TextStyle(fontFamily: "Regular", fontSize: 16.0, fontWeight: FontWeight.w600, color: Colors.grey[400]),)
                       ],
-                    )
-                  ],
+                    ),
+                    Spacer(),
+                     GestureDetector(
+                  onTap: () {
+                    student_session.remove('tpnumber');
+                    student_session.remove('balance');
+                    Navigator.push(context,
+                        MaterialPageRoute(builder: (context) => Login()));
+                  },
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.start,
+                    children: <Widget>[
+                      Text(
+                        "Sign Out",
+                        style: TextStyle(
+                          fontSize: 12.0,
+                          color: Colors.blue,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+                  ], 
                 ),
                 SizedBox(height: 24.0,),
                 Row(
@@ -73,7 +97,7 @@ class _MenuState extends State<Menu> {
                             mainAxisAlignment: MainAxisAlignment.center,                           
                             children: <Widget>[
                               Text("Current Balance", style: TextStyle(color: Colors.grey[700], fontSize: 32.0,),),
-                              Text("50", style: TextStyle(color: Colors.deepPurple[400], fontSize: 60.0,),),
+                              Text(student_session['balance'].toString(), style: TextStyle(color: Colors.deepPurple[400], fontSize: 60.0,),),
                               Text("Ringgit Malaysia", style: TextStyle(color: Colors.grey[400], fontSize: 24.0,),),
                             ],
                           ),),

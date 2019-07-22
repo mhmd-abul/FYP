@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:swiftpay/bank.dart';
+import 'package:swiftpay/auth.dart';
 
 class TopUp extends StatefulWidget {
   TopUp({Key key}) : super(key: key);
@@ -69,7 +70,7 @@ class _TopUpState extends State<TopUp> {
                           ),
                         ),
                         Text(
-                          "50",
+                          student_session['balance'].toString(),
                           style: TextStyle(
                             color: Colors.deepPurple[400],
                             fontSize: 32.0,
@@ -203,7 +204,8 @@ class _TopUpState extends State<TopUp> {
                         Navigator.push(
                             context,
                             MaterialPageRoute(
-                                builder: (context) => BankPayment()));
+                                builder: (context) =>
+                                    BankPayment(int.parse(_top_up.text))));
                       } else if (_validate_top_up == true) {
                         final snackbar = SnackBar(
                           content: Text(

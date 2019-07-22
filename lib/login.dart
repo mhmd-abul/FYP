@@ -1,9 +1,29 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
-import 'package:swiftpay/history.dart';
 import 'package:swiftpay/menu.dart';
 import 'package:swiftpay/signup.dart';
-import 'package:swiftpay/topup.dart';
+import 'package:swiftpay/model/student.dart';
+import 'dart:async';
+import 'dart:convert';
+import 'package:http/http.dart' as http;
+import 'package:swiftpay/auth.dart';
+
+Future<Map> loginStudent(String url, {Map body}) async {
+  return http.post(url, body: json.encode(body), headers: {
+    "Content-Type": "application/json"
+  }).then((http.Response response) {
+    final int statusCode = response.statusCode;
+
+    if (statusCode < 200 || statusCode > 400 || json == null) {
+      throw new Exception("Error while fetching data");
+    }
+    print('test message');
+    print(response.body);
+    Map result = json.decode(response.body);
+
+    return result;
+  });
+}
 
 class Login extends StatefulWidget {
   Login({Key key}) : super(key: key);
@@ -18,6 +38,27 @@ class _LoginState extends State<Login> {
   final _password = TextEditingController();
   bool _validate_tpnumber = false;
   bool _validate_password = false;
+
+  void loginSubmit() async {
+    print('something');
+
+    Map response = await loginStudent('http://10.0.2.2:4000/student_login',
+        body: {'tpnumber': _tpnumber.text, 'password': _password.text});
+    print(response['error']);
+    if (response['error'] != null) {
+      final snackbar = SnackBar(
+        content: Text(response['error']),
+      );
+      scaffoldKey.currentState.showSnackBar(snackbar);
+    } else {
+      Student stud = Student.fromJson(response);
+      print(stud.tpnumber);
+      print(stud.balance);
+      student_session['tpnumber'] = stud.tpnumber;
+      student_session['balance'] = stud.balance;
+      Navigator.push(context, MaterialPageRoute(builder: (context) => Menu()));
+    }
+  }
 
   @override
   void dispose() {
@@ -197,8 +238,7 @@ class _LoginState extends State<Login> {
                       });
                       if (_validate_tpnumber == false &&
                           _validate_password == false) {
-                        Navigator.push(context,
-                            MaterialPageRoute(builder: (context) => Menu()));
+                        loginSubmit();
                       } else if (_validate_tpnumber == true &&
                           _validate_password == true) {
                         final snackbar = SnackBar(

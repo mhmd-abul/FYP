@@ -1,8 +1,28 @@
 import 'package:flutter/material.dart';
 import 'package:swiftpay/menu.dart';
+import 'package:swiftpay/model/student.dart';
+import 'package:swiftpay/auth.dart';
+import 'dart:async';
+import 'dart:convert';
+import 'package:http/http.dart' as http;
+
+Future<Student> TopUp(String url, {Map body}) async {
+  return http.post(url, body: json.encode(body), headers: {
+    "Content-Type": "application/json"
+  }).then((http.Response response) {
+    final int statusCode = response.statusCode;
+
+    if (statusCode < 200 || statusCode > 400 || json == null) {
+      throw new Exception("Error while fetching data");
+    }
+    return Student.fromJson(json.decode(response.body));
+  });
+}
 
 class BankPayment extends StatefulWidget {
-  BankPayment({Key key}) : super(key: key);
+  final int nominal;
+
+  BankPayment(this.nominal);
 
   _BankPaymentState createState() => _BankPaymentState();
 }
@@ -14,6 +34,19 @@ class _BankPaymentState extends State<BankPayment> {
   final _user_password = TextEditingController();
   bool _validate_user_bank = false;
   bool _validate_user_password = false;
+
+  void TopUpConfirmation() async {
+    Student stud = await TopUp('http://10.0.2.2:4000/student_topup', body: {
+      'tpnumber': student_session['tpnumber'],
+      "transaction_type": "Top Up",
+      "nominal": widget.nominal
+    });
+    print(stud.tpnumber);
+    print(stud.balance);
+    student_session['balance'] = stud.balance;
+    print(widget.nominal);
+    Navigator.push(context, MaterialPageRoute(builder: (context) => Menu()));
+  }
 
   @override
   void dispose() {
@@ -45,8 +78,7 @@ class _BankPaymentState extends State<BankPayment> {
             new FlatButton(
               child: new Text("Confirm"),
               onPressed: () {
-                Navigator.push(
-                    context, MaterialPageRoute(builder: (context) => Menu()));
+                TopUpConfirmation();
               },
             ),
           ],

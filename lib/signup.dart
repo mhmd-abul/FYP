@@ -1,11 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
+import 'package:swiftpay/login.dart';
+import 'package:swiftpay/menu.dart';
 import 'package:swiftpay/model/student.dart';
 import 'dart:async';
 import 'dart:convert';
 import 'package:http/http.dart' as http;
 
-Future<Student> createStudent(String url, {Map body}) async {
+Future<Map> createStudent(String url, {Map body}) async {
   return http.post(url, body: json.encode(body), headers: {
     "Content-Type": "application/json"
   }).then((http.Response response) {
@@ -14,7 +16,11 @@ Future<Student> createStudent(String url, {Map body}) async {
     if (statusCode < 200 || statusCode > 400 || json == null) {
       throw new Exception("Error while fetching data");
     }
-    return Student.fromJson(json.decode(response.body));
+    print('test message');
+    print(response.body);
+    Map result = json.decode(response.body);
+
+    return result;
   });
 }
 
@@ -34,12 +40,23 @@ class _RegisterState extends State<Register> {
   void handleSubmit() async {
     print('something');
 
-    Student newStudent =
-        new Student(tpnumber: _tpnumber.text, password: _password.text);
-    print(newStudent.toMap());
-    Student p = await createStudent('http://10.0.2.2:4000/student_registration',
-        body: newStudent.toMap());
-    print(p.tpnumber);
+    Map response = await createStudent(
+        'http://10.0.2.2:4000/student_registration',
+        body: {'tpnumber': _tpnumber.text, 'password': _password.text});
+    print(response['error']);
+    if (response['error'] != null) {
+      final snackbar = SnackBar(
+        content: Text(response['error']),
+      );
+      scaffoldKey.currentState.showSnackBar(snackbar);
+    } else {
+      Student stud = Student.fromJson(response);
+      final snackbar = SnackBar(
+        content: Text('You Have Been Registered, Welcome to SwiftPay'),
+      );
+      scaffoldKey.currentState.showSnackBar(snackbar);
+      Navigator.push(context, MaterialPageRoute(builder: (context) => Login()));
+    }
   }
 
   @override
@@ -207,11 +224,6 @@ class _RegisterState extends State<Register> {
                       });
                       if (_validate_tpnumber == false &&
                           _validate_password == false) {
-                        final snackbar = SnackBar(
-                          content: Text(
-                              'You Have Been Registered, Welcome to SwiftPay'),
-                        );
-                        scaffoldKey.currentState.showSnackBar(snackbar);
                         handleSubmit();
                       } else if (_validate_tpnumber == true &&
                           _validate_password == true) {
