@@ -1,5 +1,26 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
+import 'dart:async';
+import 'dart:convert';
+import 'package:http/http.dart' as http;
+import 'package:swiftpay/auth.dart';
+import 'package:intl/intl.dart';
+
+Future<List> getTransactions(String url, {Map body}) async {
+  print(url);
+  return http.get(url).then((http.Response response) {
+    final int statusCode = response.statusCode;
+
+    if (statusCode < 200 || statusCode > 400 || json == null) {
+      throw new Exception("Error while fetching data");
+    }
+    print('test message');
+    print(response.body);
+    List result = json.decode(response.body);
+
+    return result;
+  });
+}
 
 class History extends StatefulWidget {
   History({Key key}) : super(key: key);
@@ -8,6 +29,25 @@ class History extends StatefulWidget {
 }
 
 class _HistoryState extends State<History> {
+  List transactions;
+  final format = new DateFormat('yyyy-MM-dd hh:mm');
+
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) => yourFunction(context));
+  }
+
+  void yourFunction(BuildContext context) async {
+    List response = await getTransactions(
+        'http://10.0.2.2:4000/student_transaction/${student_session["tpnumber"]}');
+
+    setState(() {
+      transactions = response;
+    });
+
+    print(transactions);
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -48,112 +88,79 @@ class _HistoryState extends State<History> {
                     height: 508.5,
                     width: 600.0,
                     child: new ListView(
-                      children: <Widget>[
-                        Card(
-                          elevation: 8.0,
-                          child: Container(
-                            padding: EdgeInsets.all(12),
-                            child: Row(
-                              children: <Widget>[
-                                Column(
-                                  mainAxisAlignment: MainAxisAlignment.start,
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: <Widget>[
-                                    Padding(
-                                      padding: const EdgeInsets.all(8.0),
-                                      child: Text('Date'),
+                      children: transactions != null
+                          ? transactions
+                              .map((transaction) => Card(
+                                    elevation: 8.0,
+                                    child: Container(
+                                      padding: EdgeInsets.all(12),
+                                      child: Row(
+                                        children: <Widget>[
+                                          Column(
+                                            mainAxisAlignment:
+                                                MainAxisAlignment.start,
+                                            crossAxisAlignment:
+                                                CrossAxisAlignment.start,
+                                            children: <Widget>[
+                                              Padding(
+                                                padding:
+                                                    const EdgeInsets.all(8.0),
+                                                child: Text('Date'),
+                                              ),
+                                              Padding(
+                                                padding:
+                                                    const EdgeInsets.all(8.0),
+                                                child: Text('Transaction Type'),
+                                              ),
+                                              Padding(
+                                                padding:
+                                                    const EdgeInsets.all(8.0),
+                                                child: Text('Amount'),
+                                              ),
+                                            ],
+                                          ),
+                                          Container(
+                                            height: 95.0,
+                                            width: 2.0,
+                                            decoration: BoxDecoration(
+                                                color: Colors.grey[200]),
+                                          ),
+                                          Column(
+                                            mainAxisAlignment:
+                                                MainAxisAlignment.start,
+                                            crossAxisAlignment:
+                                                CrossAxisAlignment.start,
+                                            children: <Widget>[
+                                              Padding(
+                                                padding:
+                                                    const EdgeInsets.all(8.0),
+                                                child: Text(format
+                                                    .format(DateTime.parse(
+                                                            transaction['date'])
+                                                        .toLocal())
+                                                    .toString()),
+                                              ),
+                                              Padding(
+                                                padding:
+                                                    const EdgeInsets.all(8.0),
+                                                child: Text(transaction[
+                                                    'transaction_type']),
+                                              ),
+                                              Padding(
+                                                padding:
+                                                    const EdgeInsets.all(8.0),
+                                                child: Text('RM. ' +
+                                                    transaction['nominal']
+                                                        .toString()),
+                                              ),
+                                            ],
+                                          ),
+                                        ],
+                                      ),
                                     ),
-                                    Padding(
-                                      padding: const EdgeInsets.all(8.0),
-                                      child: Text('Transaction Type'),
-                                    ),
-                                    Padding(
-                                      padding: const EdgeInsets.all(8.0),
-                                      child: Text('Amount'),
-                                    ),
-                                  ],
-                                ),
-                                Container(
-                                  height: 95.0,
-                                  width: 2.0,
-                                  decoration:
-                                      BoxDecoration(color: Colors.grey[200]),
-                                ),
-                                Column(
-                                  mainAxisAlignment: MainAxisAlignment.start,
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: <Widget>[
-                                    Padding(
-                                      padding: const EdgeInsets.all(8.0),
-                                      child: Text('12-2-2019'),
-                                    ),
-                                    Padding(
-                                      padding: const EdgeInsets.all(8.0),
-                                      child: Text('Top Up'),
-                                    ),
-                                    Padding(
-                                      padding: const EdgeInsets.all(8.0),
-                                      child: Text('RM. ' + '5'),
-                                    ),
-                                  ],
-                                ),
-                              ],
-                            ),
-                          ),
-                        ),
-                        Card(
-                          elevation: 8.0,
-                          child: Container(
-                            padding: EdgeInsets.all(12),
-                            child: Row(
-                              children: <Widget>[
-                                Column(
-                                  mainAxisAlignment: MainAxisAlignment.start,
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: <Widget>[
-                                    Padding(
-                                      padding: const EdgeInsets.all(8.0),
-                                      child: Text('Date'),
-                                    ),
-                                    Padding(
-                                      padding: const EdgeInsets.all(8.0),
-                                      child: Text('Transaction Type'),
-                                    ),
-                                    Padding(
-                                      padding: const EdgeInsets.all(8.0),
-                                      child: Text('Amount'),
-                                    ),
-                                  ],
-                                ),
-                                Container(
-                                  height: 95.0,
-                                  width: 2.0,
-                                  decoration:
-                                      BoxDecoration(color: Colors.grey[200]),
-                                ),
-                                Column(
-                                  mainAxisAlignment: MainAxisAlignment.start,
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: <Widget>[
-                                    Padding(
-                                      padding: const EdgeInsets.all(8.0),
-                                      child: Text('12-2-2019'),
-                                    ),
-                                    Padding(
-                                      padding: const EdgeInsets.all(8.0),
-                                      child: Text('Top Up'),
-                                    ),
-                                    Padding(
-                                      padding: const EdgeInsets.all(8.0),
-                                      child: Text('RM. ' + '5'),
-                                    ),
-                                  ],
-                                ),
-                              ],
-                            ),
-                          ),
-                        ),
-                      ],
+                                  ))
+                              .toList()
+                          : [],
                     )),
               ],
             )
