@@ -52,8 +52,6 @@ class _LoginState extends State<Login> {
       scaffoldKey.currentState.showSnackBar(snackbar);
     } else {
       Student stud = Student.fromJson(response);
-      print(stud.tpnumber);
-      print(stud.balance);
       student_session['tpnumber'] = stud.tpnumber;
       student_session['balance'] = stud.balance;
       Navigator.push(context, MaterialPageRoute(builder: (context) => Menu()));
