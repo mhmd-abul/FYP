@@ -40,8 +40,7 @@ class _RegisterState extends State<Register> {
   void handleSubmit() async {
     print('something');
 
-    Map response = await createStudent(
-        'http://10.0.2.2:4000/student_registration',
+    Map response = await createStudent('http://3.0.160.40/student_registration',
         body: {'tpnumber': _tpnumber.text, 'password': _password.text});
     print(response['error']);
     if (response['error'] != null) {

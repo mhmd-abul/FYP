@@ -42,7 +42,7 @@ class _LoginState extends State<Login> {
   void loginSubmit() async {
     print('something');
 
-    Map response = await loginStudent('http://10.0.2.2:4000/student_login',
+    Map response = await loginStudent('http://3.0.160.40/student_login',
         body: {'tpnumber': _tpnumber.text, 'password': _password.text});
     print(response['error']);
     if (response['error'] != null) {

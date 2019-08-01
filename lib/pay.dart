@@ -31,7 +31,7 @@ class _PayState extends State<Pay> {
   String data = "Scan QR Code To Make Payment";
 
   void PaymentProcess() async {
-    Student stud = await Payment('http://10.0.2.2:4000/student_payment', body: {
+    Student stud = await Payment('http://3.0.160.40/student_payment', body: {
       'tpnumber': student_session['tpnumber'],
       "transaction_type": "Deduct",
       "nominal": int.parse(data)

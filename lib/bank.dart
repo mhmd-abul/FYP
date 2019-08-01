@@ -36,7 +36,7 @@ class _BankPaymentState extends State<BankPayment> {
   bool _validate_user_password = false;
 
   void TopUpConfirmation() async {
-    Student stud = await TopUp('http://10.0.2.2:4000/student_topup', body: {
+    Student stud = await TopUp('http://3.0.160.40/student_topup', body: {
       'tpnumber': student_session['tpnumber'],
       "transaction_type": "Top Up",
       "nominal": widget.nominal

@@ -39,7 +39,7 @@ class _HistoryState extends State<History> {
 
   void yourFunction(BuildContext context) async {
     List response = await getTransactions(
-        'http://10.0.2.2:4000/student_transaction/${student_session["tpnumber"]}');
+        'http://3.0.160.40/student_transaction/${student_session["tpnumber"]}');
 
     setState(() {
       transactions = response;

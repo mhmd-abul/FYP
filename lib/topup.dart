@@ -119,7 +119,7 @@ class _TopUpState extends State<TopUp> {
                   height: 80.0,
                 ),
                 Text(
-                  "Enter Your Top Up Ammount",
+                  "Enter Your Top Up Amount",
                   style: TextStyle(
                       fontSize: 20.0,
                       color: Colors.white,
