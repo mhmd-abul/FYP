@@ -36,6 +36,8 @@ class _RegisterState extends State<Register> {
   final _password = TextEditingController();
   bool _validate_tpnumber = false;
   bool _validate_password = false;
+  String _tpnumber_error_msg = null;
+  String _password_error_msg = null;
 
   void handleSubmit() async {
     print('something');
@@ -64,6 +66,8 @@ class _RegisterState extends State<Register> {
     _password.dispose();
     _validate_tpnumber = false;
     _validate_password = false;
+    _tpnumber_error_msg = null;
+    _password_error_msg = null;
 
     super.dispose();
   }
@@ -161,9 +165,7 @@ class _RegisterState extends State<Register> {
                       ),
                       contentPadding: EdgeInsets.all(8.0),
                       hintText: "TP Number        e.g : TP043983",
-                      errorText: _validate_tpnumber
-                          ? 'TP Number Can\'t Be Empty'
-                          : null,
+                      errorText: _tpnumber_error_msg,
                     ),
                   ),
                 ),
@@ -196,9 +198,7 @@ class _RegisterState extends State<Register> {
                       ),
                       contentPadding: EdgeInsets.all(8.0),
                       hintText: "Password",
-                      errorText: _validate_password
-                          ? 'Password Can\'t Be Empty'
-                          : null,
+                      errorText: _password_error_msg,
                     ),
                   ),
                 ),
@@ -214,12 +214,30 @@ class _RegisterState extends State<Register> {
                   child: InkWell(
                     onTap: () {
                       setState(() {
-                        _tpnumber.text.isEmpty
-                            ? _validate_tpnumber = true
-                            : _validate_tpnumber = false;
-                        _password.text.isEmpty
-                            ? _validate_password = true
-                            : _validate_password = false;
+                        if (_tpnumber.text.isEmpty) {
+                          _validate_tpnumber = true;
+                          _tpnumber_error_msg = 'tpnumber cannot be empty';
+                        } else if (_tpnumber.text.length != 8) {
+                          _validate_tpnumber = true;
+                          _tpnumber_error_msg =
+                              'tpnumber should be 8 characters';
+                        } else if (!(new RegExp(r'^(TP)[0-9]')
+                            .hasMatch(_tpnumber.text))) {
+                          _validate_tpnumber = true;
+                          _tpnumber_error_msg = 'must be a valid tpnumber';
+                        } else {
+                          _validate_tpnumber = false;
+                        }
+                        if (_password.text.isEmpty) {
+                          _validate_password = true;
+                          _password_error_msg = 'password cannot be empty';
+                        } else if (_password.text.length < 6) {
+                          _validate_password = true;
+                          _password_error_msg =
+                              'password should be more than 6 characters';
+                        } else {
+                          _validate_password = false;
+                        }
                       });
                       if (_validate_tpnumber == false &&
                           _validate_password == false) {

@@ -14,6 +14,7 @@ class _TopUpState extends State<TopUp> {
 
   final _top_up = TextEditingController();
   bool _validate_top_up = false;
+  String _topup_error_msg = null;
 
   @override
   void dispose() {
@@ -178,9 +179,7 @@ class _TopUpState extends State<TopUp> {
                       ),
                       contentPadding: EdgeInsets.all(8.0),
                       hintText: "0",
-                      errorText: _validate_top_up
-                          ? 'Amount Top Up Can\'t Be Empty'
-                          : null,
+                      errorText: _topup_error_msg,
                     ),
                   ),
                 ),
@@ -196,9 +195,19 @@ class _TopUpState extends State<TopUp> {
                   child: InkWell(
                     onTap: () {
                       setState(() {
-                        _top_up.text.isEmpty
-                            ? _validate_top_up = true
-                            : _validate_top_up = false;
+                        if (_top_up.text.isEmpty) {
+                          _validate_top_up = true;
+                          _topup_error_msg = 'amount cannot be empty';
+                        } else if (int.parse(_top_up.text) > 500) {
+                          _validate_top_up = true;
+                          _topup_error_msg =
+                              'amount cannot be exceed 500 Ringgit';
+                        } else if (int.parse(_top_up.text) == 0) {
+                          _validate_top_up = true;
+                          _topup_error_msg = 'amount cannot be equals to zero';
+                        } else {
+                          _validate_top_up = false;
+                        }
                       });
                       if (_validate_top_up == false) {
                         Navigator.push(

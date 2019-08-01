@@ -90,6 +90,7 @@ class _PayState extends State<Pay> {
       String scanResult = await scan();
       setState(() {
         data = scanResult;
+        PaymentProcess();
       });
     }
   }
